@@ -6,6 +6,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import persistedState from 'pinia-plugin-persistedstate'
 import '@mdi/font/css/materialdesignicons.css'
 
 import App from './App.vue'
@@ -18,10 +19,21 @@ const vuetify = createVuetify({
   directives,
   icons: {
     defaultSet: 'mdi'
+  },
+  theme: {
+    defaultTheme: 'myCustomTheme',
+    themes: {
+      myCustomTheme: {
+        colors: {
+          primary: '#23A828'
+        }
+      }
+    }
   }
 })
-
-app.use(createPinia())
+const pinia = createPinia()
+pinia.use(persistedState)
+app.use(pinia)
 app.use(router)
 app.use(vuetify)
 

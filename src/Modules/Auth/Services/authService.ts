@@ -19,6 +19,8 @@ class AuthService {
 
     authStore.addToken(data.token)
 
+    authStore.addUser(data.user)
+
     return data
   }
 }

@@ -1,11 +1,12 @@
 <template>
-  <v-text-field :label="title" :variant="variant"></v-text-field>
+  <v-text-field :type="type" :label="title" :variant="variant"></v-text-field>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   title: string
-  variant:
+  type?: string
+  variant?:
     | 'underlined'
     | 'filled'
     | 'outlined'

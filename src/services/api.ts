@@ -10,11 +10,8 @@ const apiCore = axios.create({
 
 apiCore.interceptors.request.use(
   (config) => {
-    console.log('entrou')
     const authStore = useAuthStore()
-    console.log('easdasda::', authStore.token)
     const token = authStore.token
-    console.log('entrou 2', token)
     if (token) {
       config.headers.authorization = `Bearer ${token}`
     }

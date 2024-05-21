@@ -31,8 +31,18 @@
 
         <v-divider></v-divider>
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-          <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-home"
+            to="categoria"
+            title="Categorias"
+            value="home"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-food"
+            to="produto"
+            title="Produtos"
+            value="account"
+          ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account-group-outline"
             title="Users"
