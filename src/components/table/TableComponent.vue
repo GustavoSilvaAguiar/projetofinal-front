@@ -9,11 +9,22 @@
       <tbody>
         <tr v-for="(row, index) in data" :key="index">
           <td v-for="(coluna, index2) in colunas" :key="index2">
-            <div v-if="coluna.field !== 'marca' && coluna.field !== 'categoria'">
+            <div
+              v-if="
+                coluna.field !== 'marca' &&
+                coluna.field !== 'categoria' &&
+                coluna.field !== 'action'
+              "
+            >
               {{ formatData(coluna.type, row[coluna.field]) }}
             </div>
             <div v-if="coluna.field === 'marca'">{{ row.marca.nome }}</div>
             <div v-if="coluna.field === 'categoria'">{{ row.categoria.nome }}</div>
+            <div v-if="coluna.field === 'action'">
+              <button @click="editarAction(row.id)">
+                <v-icon size="small" icon="mdi-pencil" />
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -35,12 +46,11 @@ const Props = defineProps<{
   data: Array<{ [field: string]: any }>
 }>()
 
-const emit = defineEmits(['changePage'])
+const emit = defineEmits(['changePage', 'editAction'])
 
 const page = ref(Props.paginationData.current_page)
 
 watch(page, () => {
-  console.log('entrou', page.value)
   emit('changePage', page.value)
 })
 
@@ -51,6 +61,10 @@ const formatData = (type: string, data: any) => {
     default:
       return data
   }
+}
+
+const editarAction = (id: string) => {
+  emit('editAction', id)
 }
 
 function formatDateToBrazilian(dateString: string): string {
@@ -65,7 +79,7 @@ function formatDateToBrazilian(dateString: string): string {
 </script>
 <style lang="scss" scoped>
 .tableWrap {
-  padding: 40px;
+  padding: 10px 40px 40px 40px;
   width: 100%;
   table {
     width: 100%;

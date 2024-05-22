@@ -65,11 +65,12 @@
       :colunas="colunas"
       :data="produtos"
       @change-page="changePage"
+      @edit-action="editProduto"
     ></TableComponent>
   </div>
   <LoadingComponent class="loading" v-if="!loading"></LoadingComponent>
 
-  <ModalComponent title="Adicionar Produto" ref="modal">
+  <ModalComponent :title="payload.id ? 'Editar Produto' : 'Adicionar Produto'" ref="modal">
     <div>
       <TextField compact v-model="payload.nome" title="Nome" variant="outlined" />
       <TextField compact v-model="payload.descricao" title="Descrição" variant="outlined" />
@@ -97,8 +98,11 @@
         item-value="id"
         variant="outlined"
       />
-      <ButtonsComponent prependIcon="mdi-plus" color="primary" :onclick="postProduto"
-        >Adicionar Produto</ButtonsComponent
+      <ButtonsComponent
+        :prependIcon="payload.id ? 'mdi-pencil' : 'mdi-plus'"
+        color="primary"
+        :onclick="payload.id ? putProduto : postProduto"
+        >{{ payload.id ? 'Editar Produto' : 'Adicionar Produto' }}</ButtonsComponent
       >
     </div>
   </ModalComponent>
@@ -115,6 +119,7 @@ import MarcaService from '@/services/Marca/MarcaService'
 import categoriaService from '@/services/Categoria/categoriaService'
 import ModalComponent from '@/components/modal/ModalComponent.vue'
 import type { IProduto } from '../Interfaces/IProduto'
+import { useToast } from 'vue-toastification'
 
 const produtos = ref()
 const response = ref()
@@ -123,6 +128,7 @@ const serviceMarca = MarcaService
 const serviceCategoria = categoriaService
 const loading = ref<boolean>(false)
 const modal = ref()
+const toast = useToast()
 
 //filtros
 interface IFiltro {
@@ -181,6 +187,11 @@ const colunas = ref<{ title: string; field: string; type: 'string' | 'date' | 'm
     title: 'Data de cadastro',
     field: 'data_cadastro',
     type: 'date'
+  },
+  {
+    title: 'Ações',
+    field: 'action',
+    type: 'string'
   }
 ])
 
@@ -209,14 +220,42 @@ const changePage = (newPage: number) => {
   getProdutos()
 }
 
+const editProduto = (id: number) => {
+  modalHandle()
+  payload.value = { ...produtos.value.find((produto: IProduto) => produto.id === id) }
+}
+
 const modalHandle = () => {
+  clearPayload()
   modal.value.modalHandle()
 }
 
 const postProduto = async () => {
-  await service.postProduto(payload.value).then((response) => {
-    console.log('resposta do post: ', response)
-  })
+  await service
+    .postProduto(payload.value)
+    .then((response) => {
+      console.log('resposta do post: ', response)
+      toast.success('Produto criado com sucesso')
+    })
+    .finally(() => {
+      clearPayload()
+    })
+}
+
+const putProduto = async () => {
+  console.log('editar')
+  await service
+    .putProduto(payload.value)
+    .then(() => {
+      toast.success('Produto editado com sucesso')
+    })
+    .finally(() => {
+      clearPayload()
+    })
+}
+
+const clearPayload = () => {
+  payload.value = {} as IProduto
 }
 </script>
 <style lang="scss" scoped>

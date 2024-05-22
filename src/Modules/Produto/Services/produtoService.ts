@@ -22,6 +22,12 @@ class ProdutoService {
 
     return data
   }
+
+  public putProduto = async (payload: IProduto) => {
+    const { data } = await apiCore.put<IProduto>(this.baseURL.value, payload)
+
+    return data
+  }
 }
 
 export default new ProdutoService()
