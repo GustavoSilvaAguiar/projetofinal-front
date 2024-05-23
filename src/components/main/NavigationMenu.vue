@@ -45,6 +45,7 @@
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account-group-outline"
+            to="estoque"
             title="Users"
             value="users"
           ></v-list-item>

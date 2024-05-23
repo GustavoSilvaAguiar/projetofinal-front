@@ -11,8 +11,13 @@ class ProdutoService {
     this.baseURL.value = 'produtos'
   }
 
-  public getProdutos = async (filter: any) => {
+  public getProdutos = async (filter?: any) => {
     const { data } = await apiCore.get<IProdutoPaginado>(this.baseURL.value, { params: filter })
+    return data
+  }
+
+  public getProdutosNoPagination = async () => {
+    const { data } = await apiCore.get(`${this.baseURL.value}/nopage`)
     return data
   }
 
