@@ -7,7 +7,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, index) in data" :key="index">
+        <tr
+          :class="validateValidity(row.data_validade) ? 'validade' : ''"
+          v-for="(row, index) in data"
+          :key="index"
+        >
           <td v-for="(coluna, index2) in colunas" :key="index2">
             <div
               v-if="
@@ -20,6 +24,9 @@
             </div>
             <div v-if="coluna.field === 'marca'">{{ row.marca.nome }}</div>
             <div v-if="coluna.field === 'categoria'">{{ row.categoria.nome }}</div>
+            <div v-if="coluna.field === 'produtoNome'">{{ row.produto.nome }}</div>
+            <div v-if="coluna.field === 'fornecedorNome'">{{ row.fornecedor.nome }}</div>
+            <div v-if="coluna.field === 'marcaNome'">{{ row.produto.marca.nome }}</div>
             <div v-if="coluna.field === 'action'">
               <button @click="editarAction(row.id)">
                 <v-icon size="small" icon="mdi-pencil" />
@@ -76,6 +83,15 @@ function formatDateToBrazilian(dateString: string): string {
 
   return `${day}/${month}/${year}`
 }
+
+function validateValidity(data: string) {
+  let dataAtual = new Date()
+  dataAtual.setHours(0, 0, 0, 0)
+
+  const dataVencimento = new Date(data)
+
+  return dataAtual > dataVencimento
+}
 </script>
 <style lang="scss" scoped>
 .tableWrap {
@@ -107,5 +123,11 @@ function formatDateToBrazilian(dateString: string): string {
       padding: 3px;
     }
   }
+}
+.validade {
+  background-color: #f8d7da !important;
+}
+.validade:hover {
+  color: orangered !important;
 }
 </style>

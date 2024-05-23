@@ -4,6 +4,7 @@ import loginView from '../Modules/Auth/views/loginView.vue'
 import authRoutes from '@/Modules/Auth/auth.routes'
 import categoriaRoutes from '@/Modules/Categoria/categoria.routes'
 import produtoRoutes from '@/Modules/Produto/produto.routes'
+import estoqueRoutes from '@/Modules/Estoque/estoque.routes'
 
 const routes: Array<RouteRecordRaw> = [
   ...authRoutes,
@@ -11,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: HomeView,
-    children: [...categoriaRoutes, ...produtoRoutes]
+    children: [...categoriaRoutes, ...produtoRoutes, ...estoqueRoutes]
   }
 ]
 
