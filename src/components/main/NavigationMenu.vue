@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-layout class="teste">
-      <v-app-bar color="#23A828" prominent>
+      <!--  <v-app-bar color="#23A828" prominent>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
         <v-toolbar-title>My files</v-toolbar-title>
@@ -15,17 +15,17 @@
         </template>
 
         <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
-      </v-app-bar>
+      </v-app-bar> -->
 
-      <v-navigation-drawer color="#23A828" :rail="rail" permanent @click="rail = false">
+      <v-navigation-drawer color="primary" :rail="rail" permanent @click="rail = false">
         <!-- <v-list :items="items"></v-list> -->
-        <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          title="John Leider"
-          nav
-        >
+        <v-list-item :title="user" nav>
           <template v-slot:append>
-            <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
+            <v-btn
+              :icon="!rail ? 'mdi-chevron-left' : 'mdi-chevron-right'"
+              variant="text"
+              @click.stop="rail = !rail"
+            ></v-btn>
           </template>
         </v-list-item>
 
@@ -44,11 +44,29 @@
             value="account"
           ></v-list-item>
           <v-list-item
-            prepend-icon="mdi-account-group-outline"
+            prepend-icon="mdi-home-silo"
             to="estoque"
-            title="Users"
-            value="users"
+            title="Estoque"
+            value="estoque"
           ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-domain"
+            to="marca-e-fornecedores"
+            title="Marcas e Fornecedores"
+            value="marca-e-fornecedores"
+          ></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+        <v-list density="compact" nav>
+          <v-list-item
+            prepend-icon="mdi-account-cog"
+            to="conta-config"
+            title="Configuração de conta"
+            value="configuracao-de-conta"
+          ></v-list-item>
+          <v-list-item @click="logout" prepend-icon="mdi-logout" title="Logout" value="logout">
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
 
@@ -62,10 +80,25 @@
   </v-card>
 </template>
 <script setup lang="ts">
+import authService from '@/services/Auth/authService'
+import { useAuthStore } from '@/stores/authStore'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 const drawer = ref(true)
 const rail = ref(true)
+const serviceAuth = authService
+const user = useAuthStore().user.nome
+const router = useRouter()
+
+const logout = async () => {
+  await serviceAuth.logout().then(() => {
+    useToast().warning('Você foi deslogado')
+    useAuthStore().logout()
+    router.push('/login')
+  })
+}
 </script>
 <style scoped lang="scss">
 .v-card--variant-elevated {

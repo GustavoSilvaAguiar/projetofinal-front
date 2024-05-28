@@ -1,6 +1,7 @@
 import apiCore from '@/services/api'
 import { ref } from 'vue'
-import type { ICategoria } from '../../Modules/Categoria/Interfaces/ICategoria'
+import type { ICategoria } from '@/Interfaces/Categoria/ICategoria'
+import { useAuthStore } from '@/stores/authStore'
 
 class CategoriaService {
   protected baseURL = ref<string>('')
@@ -16,7 +17,20 @@ class CategoriaService {
   }
 
   public postCategoria = async (payload: ICategoria) => {
-    const { data } = await apiCore.post(this.baseURL.value, payload)
+    payload.idusuario = useAuthStore().user.id
+    const { data } = await apiCore.post(this.baseURL.value, payload, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+
+    return data
+  }
+
+  public putCategoria = async (payload: ICategoria) => {
+    payload.idusuario = useAuthStore().user.id
+
+    const { data } = await apiCore.post(`${this.baseURL.value}/${payload.id}`, payload, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
 
     return data
   }

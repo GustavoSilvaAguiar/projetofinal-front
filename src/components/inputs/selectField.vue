@@ -1,5 +1,5 @@
 <template>
-  <v-select
+  <v-autocomplete
     chips
     :label="label"
     :items="itens"
@@ -7,7 +7,8 @@
     :item-value="itemValue"
     :multiple="multiple"
     :variant="variant"
-  ></v-select>
+    :item-props="itemProps"
+  ></v-autocomplete>
 </template>
 <script setup lang="ts">
 defineProps<{
@@ -24,6 +25,7 @@ defineProps<{
   label: string
   itemTitle?: string
   itemValue?: string
+  itemProps?: any
   itens: Array<{}>
 }>()
 </script>

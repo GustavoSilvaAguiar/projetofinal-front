@@ -15,15 +15,19 @@
 <script setup lang="ts">
 import textField from '@/components/inputs/textField.vue'
 import { onMounted, ref } from 'vue'
-import authService from '../Services/authService'
+import authService from '../../../services/Auth/authService'
+import { useRouter } from 'vue-router'
 
 const form = ref(false)
 const service = authService
 const login = ref<string>('')
 const senha = ref<string>('')
+const router = useRouter()
 
 const doLogin = async () => {
-  service.login(login.value, senha.value)
+  await service.login(login.value, senha.value).then(() => {
+    router.push('/')
+  })
 }
 </script>
 

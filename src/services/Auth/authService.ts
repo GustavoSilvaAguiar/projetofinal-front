@@ -23,6 +23,12 @@ class AuthService {
 
     return data
   }
+
+  public logout = async () => {
+    const { data } = await apiCore.post('logout')
+
+    return data
+  }
 }
 
 export default new AuthService()

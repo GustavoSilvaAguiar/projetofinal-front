@@ -120,6 +120,7 @@ import categoriaService from '@/services/Categoria/categoriaService'
 import ModalComponent from '@/components/modal/ModalComponent.vue'
 import type { IProduto } from '../Interfaces/IProduto'
 import { useToast } from 'vue-toastification'
+import { useRoute } from 'vue-router'
 
 const produtos = ref()
 const response = ref()
@@ -129,6 +130,7 @@ const serviceCategoria = categoriaService
 const loading = ref<boolean>(false)
 const modal = ref()
 const toast = useToast()
+const useRouter = useRoute()
 
 //filtros
 interface IFiltro {
@@ -196,6 +198,7 @@ const colunas = ref<{ title: string; field: string; type: 'string' | 'date' | 'm
 ])
 
 onMounted(async () => {
+  useRouter.query.id ? (filter.value.categoria = useRouter.query.id.toString()) : ''
   await getProdutos()
   marcas.value = await serviceMarca.getMarcas()
   categorias.value = await serviceCategoria.getCategoria()

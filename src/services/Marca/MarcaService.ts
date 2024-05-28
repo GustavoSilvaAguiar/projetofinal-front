@@ -12,6 +12,11 @@ class MarcaService {
     const { data } = await apiCore.get(this.baseURL.value)
     return data
   }
+
+  public getMarcasPaginado = async () => {
+    const { data } = await apiCore.get(`${this.baseURL.value}Paginado`)
+    return data
+  }
 }
 
 export default new MarcaService()

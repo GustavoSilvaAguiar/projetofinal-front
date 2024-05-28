@@ -27,7 +27,7 @@
             <div v-if="coluna.field === 'produtoNome'">{{ row.produto.nome }}</div>
             <div v-if="coluna.field === 'fornecedorNome'">{{ row.fornecedor.nome }}</div>
             <div v-if="coluna.field === 'marcaNome'">{{ row.produto.marca.nome }}</div>
-            <div v-if="coluna.field === 'action'">
+            <div v-if="coluna.field === 'action'" class="actions">
               <button @click="editarAction(row.id)">
                 <v-icon size="small" icon="mdi-pencil" />
               </button>
@@ -38,7 +38,7 @@
     </table>
     <v-pagination
       v-model="page"
-      :length="paginationData.last_page"
+      :length="paginationData?.last_page"
       :total-visible="7"
     ></v-pagination>
   </div>
@@ -49,13 +49,13 @@ import { ref, watch } from 'vue'
 const Props = defineProps<{
   colunas: Array<{ title: string; field: string; type: 'string' | 'date' | 'money' }>
   actions?: string[]
-  paginationData: any
+  paginationData?: any
   data: Array<{ [field: string]: any }>
 }>()
 
 const emit = defineEmits(['changePage', 'editAction'])
 
-const page = ref(Props.paginationData.current_page)
+const page = ref(Props.paginationData?.current_page)
 
 watch(page, () => {
   emit('changePage', page.value)
@@ -129,5 +129,10 @@ function validateValidity(data: string) {
 }
 .validade:hover {
   color: orangered !important;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
