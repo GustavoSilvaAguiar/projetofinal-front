@@ -17,16 +17,24 @@
               v-if="
                 coluna.field !== 'marca' &&
                 coluna.field !== 'categoria' &&
-                coluna.field !== 'action'
+                coluna.field !== 'action' &&
+                coluna.field !== 'contato.telefone' &&
+                coluna.field !== 'contato.email'
               "
             >
               {{ formatData(coluna.type, row[coluna.field]) }}
             </div>
-            <div v-if="coluna.field === 'marca'">{{ row.marca.nome }}</div>
-            <div v-if="coluna.field === 'categoria'">{{ row.categoria.nome }}</div>
-            <div v-if="coluna.field === 'produtoNome'">{{ row.produto.nome }}</div>
-            <div v-if="coluna.field === 'fornecedorNome'">{{ row.fornecedor.nome }}</div>
-            <div v-if="coluna.field === 'marcaNome'">{{ row.produto.marca.nome }}</div>
+            <div v-if="coluna.field === 'marca'">{{ row?.marca?.nome }}</div>
+            <div v-if="coluna.field === 'categoria'">{{ row?.categoria?.nome }}</div>
+            <div v-if="coluna.field === 'produtoNome'">{{ row?.produto?.nome }}</div>
+            <div v-if="coluna.field === 'fornecedorNome'">{{ row?.fornecedor?.nome }}</div>
+            <div v-if="coluna.field === 'marcaNome'">{{ row.produto?.marca?.nome }}</div>
+            <div v-if="coluna.field === 'contato.telefone'">
+              {{ `(${row?.contato?.ddd})${row.contato?.telefone}` }}
+            </div>
+            <div v-if="coluna.field === 'contato.email'">
+              {{ row.contato?.email }}
+            </div>
             <div v-if="coluna.field === 'action'" class="actions">
               <button @click="editarAction(row.id)">
                 <v-icon size="small" icon="mdi-pencil" />
