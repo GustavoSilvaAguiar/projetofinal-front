@@ -1,3 +1,6 @@
+import type { ICategoria } from '@/Interfaces/Categoria/ICategoria'
+import type { IMarca } from '@/Interfaces/Marca/IMarca'
+
 export interface IProduto {
   nome: string
   descricao: string
@@ -9,4 +12,6 @@ export interface IProduto {
   preco_venda: number
   und_medida: string
   data_cadastro: Date
+  marca?: IMarca
+  categoria?: ICategoria
 }

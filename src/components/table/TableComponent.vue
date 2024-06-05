@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr
-          :class="validateValidity(row.data_validade) ? 'validade' : ''"
+          :class="`${estoqueLow(row.total_estoque) ? 'estoqueLow' : ''} ${validateValidity(row.data_validade) ? 'validade' : ''} `"
           v-for="(row, index) in data"
           :key="index"
         >
@@ -36,8 +36,11 @@
               {{ row.contato?.email }}
             </div>
             <div v-if="coluna.field === 'action'" class="actions">
-              <button @click="editarAction(row.id)">
+              <button v-if="coluna.subActions?.edit" @click="editarAction(row.id)">
                 <v-icon size="small" icon="mdi-pencil" />
+              </button>
+              <button v-if="coluna.subActions?.details" @click="detail(row.id)">
+                <v-icon size="small" icon="mdi-eye" />
               </button>
             </div>
           </td>
@@ -52,16 +55,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { ITable } from '@/Interfaces/Table/ITable'
 import { ref, watch } from 'vue'
 
 const Props = defineProps<{
-  colunas: Array<{ title: string; field: string; type: 'string' | 'date' | 'money' }>
+  colunas: Array<ITable>
   actions?: string[]
   paginationData?: any
   data: Array<{ [field: string]: any }>
 }>()
 
-const emit = defineEmits(['changePage', 'editAction'])
+const emit = defineEmits(['changePage', 'editAction', 'showDetail'])
 
 const page = ref(Props.paginationData?.current_page)
 
@@ -82,6 +86,10 @@ const editarAction = (id: string) => {
   emit('editAction', id)
 }
 
+const detail = (id: string) => {
+  emit('showDetail', id)
+}
+
 function formatDateToBrazilian(dateString: string): string {
   const date = new Date(dateString)
 
@@ -99,6 +107,11 @@ function validateValidity(data: string) {
   const dataVencimento = new Date(data)
 
   return dataAtual > dataVencimento
+}
+
+const estoqueLow = (data: number) => {
+  console.log('sdfasdf::', data)
+  return data < 100
 }
 </script>
 <style lang="scss" scoped>
@@ -132,12 +145,19 @@ function validateValidity(data: string) {
     }
   }
 }
+.estoqueLow {
+  background-color: #eef095 !important;
+}
+.estoqueLow:hover {
+  color: orange !important;
+}
 .validade {
   background-color: #f8d7da !important;
 }
 .validade:hover {
   color: orangered !important;
 }
+
 .actions {
   display: flex;
   align-items: center;

@@ -5,8 +5,7 @@
       <v-form v-model="form" class="card">
         <textField title="Login" variant="outlined" v-model="login"></textField>
         <textField type="password" title="Senha" variant="outlined" v-model="senha"></textField>
-        <v-btn variant="tonal" @click="doLogin()"> Login </v-btn>
-        <v-btn variant="tonal" color="primary" @click="doLogin()"> Cadastrar </v-btn>
+        <v-btn color="primary" style="margin-right: 5px" @click="doLogin()"> Login </v-btn>
       </v-form>
     </div>
   </div>

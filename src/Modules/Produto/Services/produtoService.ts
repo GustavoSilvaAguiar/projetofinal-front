@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { IProdutoPaginado } from '../Interfaces/IProdutoPaginado'
 import type { IProduto } from '../Interfaces/IProduto'
 import { useAuthStore } from '@/stores/authStore'
+import type { IInfoNutricional } from '../Interfaces/IInfoNutricional'
 
 class ProdutoService {
   protected baseURL = ref<string>('')
@@ -18,6 +19,30 @@ class ProdutoService {
 
   public getProdutosNoPagination = async () => {
     const { data } = await apiCore.get(`${this.baseURL.value}/nopage`)
+    return data
+  }
+
+  public getProdutoDetail = async (id: string) => {
+    const { data } = await apiCore.get(`${this.baseURL.value}/details/${id}`)
+
+    return data
+  }
+
+  public getInfoNutricional = async (id: string) => {
+    const { data } = await apiCore.get(`${this.baseURL.value}/info-nutricional/${id}`)
+
+    return data
+  }
+
+  public postInfoNutricional = async (payload: IInfoNutricional) => {
+    const { data } = await apiCore.post(`${this.baseURL.value}/info-nutricional`, payload)
+
+    return data
+  }
+
+  public putInfoNutricional = async (payload: IInfoNutricional) => {
+    const { data } = await apiCore.put(`${this.baseURL.value}/info-nutricional`, payload)
+
     return data
   }
 

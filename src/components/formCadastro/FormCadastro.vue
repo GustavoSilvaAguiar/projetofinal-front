@@ -31,28 +31,71 @@
       <TextField v-model="payload.email" title="Email" />
     </div>
 
-    <ButtonsComponent color="primary" type="submit" block>Cadastrar</ButtonsComponent>
+    <ButtonsComponent :disabled="!validado" color="primary" type="submit" block>{{
+      edit ? 'Editar' : 'Cadastrar'
+    }}</ButtonsComponent>
   </v-form>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import SelectField from '../inputs/selectField.vue'
 import TextField from '../inputs/textField.vue'
-import TitleView from '../title/TitleView.vue'
+import TitleView from '../infoComponents/TitleView.vue'
 import ButtonsComponent from '../buttons/ButtonsComponent.vue'
 import type { ICadastro } from '@/Interfaces/User/ICadastro'
+import cidadeService from '@/services/Cidade/cidadeService'
+import userService from '@/services/User/userService'
+import helpers from '@/helpers/helpers'
 
-defineProps<{
-  cidades: any
+const props = defineProps<{
+  edit: boolean
 }>()
 
-const emit = defineEmits(['createUser'])
-
+const serviceUser = userService
+const serviceCidade = cidadeService
+const cidades = ref()
+const help = helpers
+const validado = ref<boolean>(true)
 const payload = ref<ICadastro>({} as ICadastro)
 
+onMounted(async () => {
+  cidades.value = await serviceCidade.getCidades()
+  if (props.edit) {
+    await serviceUser.getUser().then((response: any) => {
+      const { endereco, contato, ...rest } = response
+      payload.value = { ...rest, ...endereco, ...contato }
+    })
+  }
+})
+
+watch(
+  () => payload.value,
+  () => {
+    validado.value = help.validadorPayload(
+      payload.value,
+      [
+        'nome',
+        'cpf',
+        'bairro',
+        'rua',
+        'login',
+        'senha',
+        'numero',
+        'cep',
+        'idcidade',
+        'telefone',
+        'ddd'
+      ],
+      ['email']
+    )
+  },
+  { deep: true }
+)
+
+const emit = defineEmits(['createUser', 'editUser'])
+
 const submit = () => {
-  console.log('testeeeee:: ')
-  emit('createUser', payload.value)
+  !props.edit ? emit('createUser', payload.value) : emit('editUser', payload.value)
 }
 
 const rules = ref({

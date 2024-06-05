@@ -1,12 +1,12 @@
 <template>
-  <ButtonsComponent @click="handleCreate" color="primary" variant="tonal" prepend-icon="mdi-plus"
-    >Adicionar Categoria</ButtonsComponent
-  >
-  <ButtonsComponent @click="handleEdit" variant="tonal" prepend-icon="mdi-pencil-outline"
-    >Editar Categoria</ButtonsComponent
-  >
-  <!-- <div v-for="(categoria, index) in categorias" :key="index">{{ categoria }}</div> -->
-
+  <div class="btnWrap">
+    <ButtonsComponent @click="handleCreate" color="primary" prepend-icon="mdi-plus"
+      >Adicionar Categoria</ButtonsComponent
+    >
+    <ButtonsComponent @click="handleEdit" color="warning" prepend-icon="mdi-pencil-outline"
+      >Editar Categoria</ButtonsComponent
+    >
+  </div>
   <div class="cardsWrap">
     <CardCategoria
       @click="router.push({ path: 'produto', query: { id: categoria.id } })"
@@ -16,7 +16,7 @@
     />
   </div>
 
-  <ModalComponent title="Adicionar Categoria" ref="modal">
+  <ModalComponent :title="edit ? 'Editar Categoria' : 'Adicionar Categoria'" ref="modal">
     <div>
       <selectField
         v-if="edit"
@@ -29,7 +29,12 @@
       />
       <TextField title="nome" v-model="payload.nome" compact variant="outlined" />
       <FileField v-model="payload.img"></FileField>
-      <ButtonsComponent v-if="!edit" :onclick="createCategoria">
+      <ButtonsComponent
+        v-if="!edit"
+        prepend-icon="mdi-plus"
+        color="primary"
+        :onclick="createCategoria"
+      >
         Adicionar categoria
       </ButtonsComponent>
       <ButtonsComponent v-if="edit" :onclick="editCategoria"> Editar categoria </ButtonsComponent>
@@ -123,5 +128,13 @@ const editCategoria = async () => {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
   padding: 40px;
+}
+
+.btnWrap {
+  display: flex;
+  column-gap: 10px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  padding-right: 40px;
 }
 </style>

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <ButtonsComponent prependIcon="mdi-swap-vertical-bold" color="primary" :onclick="modalHandle"
-      >Movimentar Estoque</ButtonsComponent
-    >
     <div class="filtroWrap">
       <TextField v-model="filtro.produto" title="Nome produto" variant="outlined" />
       <SelectField
@@ -55,8 +52,11 @@
       <ButtonsComponent @click="getEstoque" color="primary" prepend-icon="mdi-filter"
         >Aplicar filtros</ButtonsComponent
       >
-      <ButtonsComponent @click="clearFilter" color="primary" prepend-icon="mdi-filter-off"
+      <ButtonsComponent @click="clearFilter" color="warning" prepend-icon="mdi-filter-off"
         >Limpar filtros</ButtonsComponent
+      >
+      <ButtonsComponent prependIcon="mdi-swap-vertical-bold" color="primary" :onclick="addEstoque"
+        >Movimentar Estoque</ButtonsComponent
       >
     </div>
     <TableComponent
@@ -65,7 +65,7 @@
       :pagination-data="estoque"
       :data="estoque.data"
       @change-page="changePage"
-      @edit-action="editProduto"
+      @edit-action="editEstoque"
     />
 
     <LoadingComponent v-if="loading" />
@@ -75,6 +75,7 @@
     <div class="modalWrap">
       <SelectField
         v-model="payload.idproduto"
+        :readonly="change"
         label="Produto"
         :itens="produtos"
         item-title="nome"
@@ -83,6 +84,7 @@
       />
       <SelectField
         v-model="payload.idfornecedor"
+        :readonly="change"
         label="Fornecedor"
         :itens="fornecedor"
         item-title="nome"
@@ -92,7 +94,7 @@
       <SelectField
         v-model="payload.tipo_operacao"
         label="Operação"
-        :itens="['entrada', 'saída']"
+        :itens="change ? ['entrada', 'saída'] : ['entrada']"
         variant="outlined"
       />
       <TextField
@@ -101,17 +103,27 @@
         title="Quantidade movimentada"
         variant="outlined"
       />
-      <TextField v-model="payload.lcz_estoque" title="Localização no estoque" variant="outlined" />
+      <TextField
+        :readonly="change"
+        v-model="payload.lcz_estoque"
+        title="Localização no estoque"
+        variant="outlined"
+      />
       <TextField
         type="date"
+        :readonly="change"
         v-model="payload.data_validade"
         title="Data de validade"
         variant="outlined"
       />
-      <TextField v-model="payload.lote" title="Lote" variant="outlined" />
+      <TextField :readonly="change" v-model="payload.lote" title="Lote" variant="outlined" />
       <TextField v-model="payload.observacao" title="Observação" variant="outlined" />
     </div>
-    <ButtonsComponent prependIcon="mdi-swap-vertical-bold" color="primary" :onclick="postEstoque"
+    <ButtonsComponent
+      :disabled="!validado"
+      prependIcon="mdi-swap-vertical-bold"
+      color="primary"
+      :onclick="postEstoque"
       >Movimentar Estoque</ButtonsComponent
     >
   </ModalComponent>
@@ -127,10 +139,12 @@ import estoqueService from '@/services/Estoque/estoqueService'
 import fornecedorService from '@/services/Fornecedor/fornecedorService'
 import MarcaService from '@/services/Marca/MarcaService'
 import ModalComponent from '@/components/modal/ModalComponent.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import produtoService from '@/Modules/Produto/Services/produtoService'
 import type { IEstoque } from '@/Interfaces/Estoque/IEstoque'
 import { useToast } from 'vue-toastification'
+import type { ITable } from '@/Interfaces/Table/ITable'
+import helpers from '@/helpers/helpers'
 
 const service = estoqueService
 const serviceMarca = MarcaService
@@ -145,12 +159,16 @@ const fornecedor = ref()
 const produtos = ref()
 
 const loading = ref<boolean>(true)
+const change = ref<boolean>(false)
+const toast = useToast()
+const validado = ref<boolean>(false)
+const help = helpers
 
 const filtro = ref<IEstoqueFiltro>({} as IEstoqueFiltro)
 
 const payload = ref<IEstoque>({} as IEstoque)
 
-const colunas = ref<{ title: string; field: string; type: 'string' | 'date' | 'money' }[]>([
+const colunas = ref<ITable[]>([
   {
     title: 'Produto',
     field: 'produtoNome',
@@ -159,6 +177,11 @@ const colunas = ref<{ title: string; field: string; type: 'string' | 'date' | 'm
   {
     title: 'Quantidade movimentada',
     field: 'qtd_estoque',
+    type: 'string'
+  },
+  {
+    title: 'Total em estoque',
+    field: 'total_estoque',
     type: 'string'
   },
   {
@@ -195,6 +218,12 @@ const colunas = ref<{ title: string; field: string; type: 'string' | 'date' | 'm
     title: 'Observações',
     field: 'observacao',
     type: 'string'
+  },
+  {
+    title: 'Ações',
+    field: 'action',
+    type: 'string',
+    subActions: { edit: true }
   }
 ])
 
@@ -206,6 +235,22 @@ onMounted(async () => {
   produtos.value = await serviceProduto.getProdutosNoPagination()
   loading.value = false
 })
+
+watch(
+  () => payload.value,
+  () => {
+    validado.value = help.validadorPayload(payload.value, [
+      'idproduto',
+      'idfornecedor',
+      'qtd_estoque',
+      'lcz_estoque',
+      'data_validade',
+      'lote',
+      'tipo_operacao'
+    ])
+  },
+  { deep: true }
+)
 
 const getEstoque = async () => {
   loading.value = true
@@ -225,14 +270,29 @@ const clearFilter = () => {
 }
 
 const postEstoque = async () => {
-  await service.postEstoque(payload.value).then((respnse) => {
-    useToast().success('Estoque movimentado')
+  if (
+    payload.value.tipo_operacao === 'saída' &&
+    payload.value.qtd_estoque > payload.value.total_estoque
+  ) {
+    toast.warning('Quantida a ser movimentada maior que o estoque atual')
+
+    return null
+  }
+  await service.postEstoque(payload.value).then(() => {
+    toast.success('Estoque movimentado')
   })
 }
 
-const editProduto = (id: number) => {
-  //modalHandle()
-  //payload.value = { ...produtos.value.find((produto: IProduto) => produto.id === id) }
+const editEstoque = (id: number) => {
+  change.value = true
+  payload.value = { ...estoque.value.data.find((estoque: IEstoque) => estoque.id === id) }
+  modalHandle()
+}
+
+const addEstoque = () => {
+  change.value = false
+  payload.value = {} as IEstoque
+  modalHandle()
 }
 
 const modalHandle = () => {
@@ -242,9 +302,9 @@ const modalHandle = () => {
 <style lang="scss" scoped>
 .filtroWrap {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   column-gap: 10px;
-  padding: 20px;
+  padding: 40px;
 }
 
 .modalWrap {

@@ -106,6 +106,7 @@ import { useToast } from 'vue-toastification'
 import type { IMarcaPaginado } from '@/Interfaces/Marca/IMarcaPaginado'
 import type { IFornecedorCadastro } from '@/Interfaces/Fornecedor/IFornecedorCadastro'
 import type { IFornecedor } from '@/Interfaces/Fornecedor/IFornecedor'
+import type { ITable } from '@/Interfaces/Table/ITable'
 
 const loadingMarca = ref<boolean>(true)
 const loadingFornecedor = ref<boolean>(true)
@@ -192,8 +193,6 @@ const editFornecedor = (id: number) => {
   payloadFornecedor.value.nome = fornecedor?.nome
   payloadFornecedor.value.idusuario = fornecedor?.idusuario
   payloadFornecedor.value.idcontato = fornecedor?.idcontato
-
-  console.log('asddasd', payloadFornecedor.value)
 }
 
 const changeEditValue = (value: boolean) => {
@@ -237,7 +236,7 @@ const modalFornecedorHandle = () => {
   modalFornecedor.value.modalHandle()
 }
 
-const colunasMarca = ref<{ title: string; field: string; type: 'string' | 'date' | 'money' }[]>([
+const colunasMarca = ref<ITable[]>([
   {
     title: 'Marcas',
     field: 'nome',
@@ -246,13 +245,14 @@ const colunasMarca = ref<{ title: string; field: string; type: 'string' | 'date'
   {
     title: 'Ações',
     field: 'action',
-    type: 'string'
+    type: 'string',
+    subActions: {
+      edit: true
+    }
   }
 ])
 
-const colunasFornecedores = ref<
-  { title: string; field: string; type: 'string' | 'date' | 'money' }[]
->([
+const colunasFornecedores = ref<ITable[]>([
   {
     title: 'Fornecedores',
     field: 'nome',
@@ -271,7 +271,10 @@ const colunasFornecedores = ref<
   {
     title: 'Ações',
     field: 'action',
-    type: 'string'
+    type: 'string',
+    subActions: {
+      edit: true
+    }
   }
 ])
 </script>

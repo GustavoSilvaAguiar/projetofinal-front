@@ -1,8 +1,7 @@
 <template>
   <div class="cardWrap">
     <div :style="`background-image: url(${data.img});`" class="background"></div>
-    <!-- <img :src="data.img ? data.img : ''" /> -->
-    {{ data.nome }}
+    <strong>{{ data.nome }}</strong>
   </div>
 </template>
 <script setup lang="ts">
@@ -30,6 +29,7 @@ defineProps<{
     border-radius: 20px 20px 0px 0px;
     background-repeat: no-repeat;
     background-size: cover;
+    margin-bottom: 5px;
   }
 
   img {
