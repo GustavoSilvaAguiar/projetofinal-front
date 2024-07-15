@@ -21,7 +21,12 @@ export const useAuthStore = defineStore(
       user.value.nome = newUser.nome
     }
 
-    return { token, addToken, addUser, user }
+    function logout() {
+      token.value = null
+      user.value = {} as IUser
+    }
+
+    return { token, addToken, addUser, logout, user }
   },
   {
     persist: {

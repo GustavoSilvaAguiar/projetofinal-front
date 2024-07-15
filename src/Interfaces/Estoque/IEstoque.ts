@@ -8,6 +8,7 @@ export interface IEstoque {
   qtd_estoque: number
   lcz_estoque: string
   data_validade: string | Date
+  total_estoque: number
   lote: string
   tipo_operacao: 'entrada' | 'saída'
   id: number

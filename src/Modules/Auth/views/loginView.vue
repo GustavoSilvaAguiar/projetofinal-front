@@ -5,8 +5,7 @@
       <v-form v-model="form" class="card">
         <textField title="Login" variant="outlined" v-model="login"></textField>
         <textField type="password" title="Senha" variant="outlined" v-model="senha"></textField>
-        <v-btn variant="tonal" @click="doLogin()"> Login </v-btn>
-        <v-btn variant="tonal" color="primary" @click="doLogin()"> Cadastrar </v-btn>
+        <v-btn color="primary" style="margin-right: 5px" @click="doLogin()"> Login </v-btn>
       </v-form>
     </div>
   </div>
@@ -15,15 +14,19 @@
 <script setup lang="ts">
 import textField from '@/components/inputs/textField.vue'
 import { onMounted, ref } from 'vue'
-import authService from '../Services/authService'
+import authService from '../../../services/Auth/authService'
+import { useRouter } from 'vue-router'
 
 const form = ref(false)
 const service = authService
 const login = ref<string>('')
 const senha = ref<string>('')
+const router = useRouter()
 
 const doLogin = async () => {
-  service.login(login.value, senha.value)
+  await service.login(login.value, senha.value).then(() => {
+    router.push('/')
+  })
 }
 </script>
 

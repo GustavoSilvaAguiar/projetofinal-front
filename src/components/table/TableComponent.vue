@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr
-          :class="validateValidity(row.data_validade) ? 'validade' : ''"
+          :class="`${estoqueLow(row.total_estoque) ? 'estoqueLow' : ''} ${validateValidity(row.data_validade) ? 'validade' : ''} `"
           v-for="(row, index) in data"
           :key="index"
         >
@@ -17,19 +17,30 @@
               v-if="
                 coluna.field !== 'marca' &&
                 coluna.field !== 'categoria' &&
-                coluna.field !== 'action'
+                coluna.field !== 'action' &&
+                coluna.field !== 'contato.telefone' &&
+                coluna.field !== 'contato.email'
               "
             >
               {{ formatData(coluna.type, row[coluna.field]) }}
             </div>
-            <div v-if="coluna.field === 'marca'">{{ row.marca.nome }}</div>
-            <div v-if="coluna.field === 'categoria'">{{ row.categoria.nome }}</div>
-            <div v-if="coluna.field === 'produtoNome'">{{ row.produto.nome }}</div>
-            <div v-if="coluna.field === 'fornecedorNome'">{{ row.fornecedor.nome }}</div>
-            <div v-if="coluna.field === 'marcaNome'">{{ row.produto.marca.nome }}</div>
-            <div v-if="coluna.field === 'action'">
-              <button @click="editarAction(row.id)">
+            <div v-if="coluna.field === 'marca'">{{ row?.marca?.nome }}</div>
+            <div v-if="coluna.field === 'categoria'">{{ row?.categoria?.nome }}</div>
+            <div v-if="coluna.field === 'produtoNome'">{{ row?.produto?.nome }}</div>
+            <div v-if="coluna.field === 'fornecedorNome'">{{ row?.fornecedor?.nome }}</div>
+            <div v-if="coluna.field === 'marcaNome'">{{ row.produto?.marca?.nome }}</div>
+            <div v-if="coluna.field === 'contato.telefone'">
+              {{ `(${row?.contato?.ddd})${row.contato?.telefone}` }}
+            </div>
+            <div v-if="coluna.field === 'contato.email'">
+              {{ row.contato?.email }}
+            </div>
+            <div v-if="coluna.field === 'action'" class="actions">
+              <button v-if="coluna.subActions?.edit" @click="editarAction(row.id)">
                 <v-icon size="small" icon="mdi-pencil" />
+              </button>
+              <button v-if="coluna.subActions?.details" @click="detail(row.id)">
+                <v-icon size="small" icon="mdi-eye" />
               </button>
             </div>
           </td>
@@ -38,24 +49,25 @@
     </table>
     <v-pagination
       v-model="page"
-      :length="paginationData.last_page"
+      :length="paginationData?.last_page"
       :total-visible="7"
     ></v-pagination>
   </div>
 </template>
 <script setup lang="ts">
+import type { ITable } from '@/Interfaces/Table/ITable'
 import { ref, watch } from 'vue'
 
 const Props = defineProps<{
-  colunas: Array<{ title: string; field: string; type: 'string' | 'date' | 'money' }>
+  colunas: Array<ITable>
   actions?: string[]
-  paginationData: any
+  paginationData?: any
   data: Array<{ [field: string]: any }>
 }>()
 
-const emit = defineEmits(['changePage', 'editAction'])
+const emit = defineEmits(['changePage', 'editAction', 'showDetail'])
 
-const page = ref(Props.paginationData.current_page)
+const page = ref(Props.paginationData?.current_page)
 
 watch(page, () => {
   emit('changePage', page.value)
@@ -72,6 +84,10 @@ const formatData = (type: string, data: any) => {
 
 const editarAction = (id: string) => {
   emit('editAction', id)
+}
+
+const detail = (id: string) => {
+  emit('showDetail', id)
 }
 
 function formatDateToBrazilian(dateString: string): string {
@@ -91,6 +107,11 @@ function validateValidity(data: string) {
   const dataVencimento = new Date(data)
 
   return dataAtual > dataVencimento
+}
+
+const estoqueLow = (data: number) => {
+  console.log('sdfasdf::', data)
+  return data < 100
 }
 </script>
 <style lang="scss" scoped>
@@ -124,10 +145,22 @@ function validateValidity(data: string) {
     }
   }
 }
+.estoqueLow {
+  background-color: #eef095 !important;
+}
+.estoqueLow:hover {
+  color: orange !important;
+}
 .validade {
   background-color: #f8d7da !important;
 }
 .validade:hover {
   color: orangered !important;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
