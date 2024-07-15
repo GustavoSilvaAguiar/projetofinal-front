@@ -291,7 +291,7 @@ const colunasFornecedores = ref<ITable[]>([
   gap: 10px;
   padding: 10px 20px;
 
-  ::v-deep .v-input__details {
+  :deep(.v-input__details) {
     display: none;
   }
 }
