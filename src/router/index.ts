@@ -7,6 +7,7 @@ import estoqueRoutes from '@/Modules/Estoque/estoque.routes'
 import marcasEFornecedoresRoutes from '@/Modules/Marcas_e_Forncedores/marcasEFornecedores.routes'
 import configUserRoutes from '@/Modules/ConfigUser/configUser.routes'
 import cadastroRoutes from '@/Modules/Cadastro/cadastro.routes'
+import dashboardRoutes from '@/Modules/Dashboard/dasboard.routes'
 
 const routes: Array<RouteRecordRaw> = [
   ...authRoutes,
@@ -20,7 +21,8 @@ const routes: Array<RouteRecordRaw> = [
       ...estoqueRoutes,
       ...marcasEFornecedoresRoutes,
       ...configUserRoutes,
-      ...cadastroRoutes
+      ...cadastroRoutes,
+      ...dashboardRoutes
     ]
   }
 ]

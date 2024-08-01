@@ -1,5 +1,6 @@
 <template>
   <div class="btnWrap">
+    
     <ButtonsComponent @click="handleCreate" color="primary" prepend-icon="mdi-plus"
       >Adicionar Categoria</ButtonsComponent
     >
@@ -53,6 +54,8 @@ import type { ICategoria } from '@/Interfaces/Categoria/ICategoria'
 import selectField from '@/components/inputs/selectField.vue'
 import { useToast } from 'vue-toastification'
 import router from '@/router'
+import BarChart from '@/components/charts/BarChart.vue'
+
 
 const modal = ref()
 

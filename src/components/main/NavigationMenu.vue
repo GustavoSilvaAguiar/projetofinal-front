@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-layout class="teste">
-      <v-navigation-drawer color="primary" :rail="rail" permanent @click="rail = false">
+      <v-navigation-drawer class="no-print" color="primary" :rail="rail" permanent @click="rail = false">
         <v-list-item :title="user" nav>
           <template v-slot:append>
             <v-btn
@@ -37,6 +37,12 @@
             to="marca-e-fornecedores"
             title="Marcas e Fornecedores"
             value="marca-e-fornecedores"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-chart-line"
+            to="dashboard"
+            title="Dashboard"
+            value="dashboard"
           ></v-list-item>
 
           <v-divider thickness="2" opacity="30%" style="margin-bottom: 5px"></v-divider>

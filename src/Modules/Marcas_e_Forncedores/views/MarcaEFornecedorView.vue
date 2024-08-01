@@ -155,6 +155,7 @@ const putFornececedor = async () => {
 
 const postMarc = async () => {
   await serviceMarcas.postMarca(payloadMarca.value).then(() => {
+    getMarcasPaginado()
     toast.success('Sucesso ao cadastrar marca')
   })
 }

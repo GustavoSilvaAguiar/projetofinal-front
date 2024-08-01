@@ -80,6 +80,7 @@
       @showDetail="showDetail"
     ></TableComponent>
   </div>
+  
   <LoadingComponent class="loading" v-if="!loading"></LoadingComponent>
 
   <ModalComponent :title="payload.id ? 'Editar Produto' : 'Adicionar Produto'" ref="modal">
@@ -226,12 +227,11 @@ const colunas = ref<ITable[]>([
 ])
 
 onMounted(async () => {
+  loading.value = true
   useRouter.query.id ? (filter.value.categoria = useRouter.query.id.toString()) : ''
   await getProdutos()
   marcas.value = await serviceMarca.getMarcas()
   categorias.value = await serviceCategoria.getCategoria()
-
-  loading.value = true
 })
 
 watch(

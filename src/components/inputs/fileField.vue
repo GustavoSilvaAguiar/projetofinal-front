@@ -1,6 +1,6 @@
 <template>
   <v-file-input
-    label="teste"
+    label="Imagem"
     accept="image/png, image/jpeg, image/bmp"
     variant="outlined"
     prepend-icon="mdi-camera"
